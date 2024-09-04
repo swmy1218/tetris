@@ -199,7 +199,7 @@ function moveRight() {
 }
 
 function rotate() {
-    undraw();  // 現在のミノを消す
+    undraw();
     const previousRotation = currentRotation;
     currentRotation++;
     if (currentRotation === tetrominoes[currentIndex].shape.length) {
@@ -210,9 +210,14 @@ function rotate() {
     const isAtRightEdge = current.some(index => (currentPosition + index) % width >= width - 1);
     const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0);
 
-    // 境界チェック
-    if (isAtRightEdge || isAtLeftEdge || current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
-        currentRotation = previousRotation;  // 回転を元に戻す
+    if (isAtRightEdge) {
+        currentPosition -= 1;
+    } else if (isAtLeftEdge) {
+        currentPosition += 1;
+    }
+
+    if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
+        currentRotation = previousRotation;
         current = tetrominoes[currentIndex].shape[currentRotation];
     }
 
