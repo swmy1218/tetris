@@ -16,17 +16,20 @@ scoreDisplay.innerHTML = "Score: 0";
 document.body.insertBefore(scoreDisplay, tetris);
 
 const tetrominoes = [
+    // Iミノ
     {
         shape: [
             [1, width + 1, width * 2 + 1, width * 3 + 1], // I
             [width, width + 1, width + 2, width + 3]
         ]
     },
+    // Oミノ
     {
         shape: [
             [0, 1, width, width + 1] // O
         ]
     },
+    // Tミノ
     {
         shape: [
             [1, width, width + 1, width + 2], // T
@@ -35,7 +38,38 @@ const tetrominoes = [
             [1, width, width + 1, width * 2 + 1]
         ]
     },
-    // 他のテトリミノ...
+    // Sミノ
+    {
+        shape: [
+            [0, 1, width + 1, width + 2], // S
+            [2, width + 1, width + 2, width * 2 + 1]
+        ]
+    },
+    // Zミノ
+    {
+        shape: [
+            [1, 2, width, width + 1], // Z
+            [1, width + 1, width + 2, width * 2 + 2]
+        ]
+    },
+    // Jミノ
+    {
+        shape: [
+            [0, width, width + 1, width + 2], // J
+            [1, 2, width + 2, width * 2 + 2],
+            [width, width + 1, width + 2, width * 2 + 2],
+            [1, width + 1, width + 2, width * 2]
+        ]
+    },
+    // Lミノ
+    {
+        shape: [
+            [2, width, width + 1, width + 2], // L
+            [1, width + 1, width * 2 + 1, width * 2 + 2],
+            [width, width + 1, width + 2, width * 2],
+            [0, 1, width + 1, width * 2 + 1]
+        ]
+    }
 ];
 
 // テトリミノを順番に取得
