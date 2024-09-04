@@ -199,32 +199,33 @@ function moveRight() {
 }
 
 function rotate() {
-    undraw();  // ミノを一度消す
-    const previousRotation = currentRotation;  // 現在の回転状態を保存
+    undraw();
+    const previousRotation = currentRotation;
     currentRotation++;
     if (currentRotation === tetrominoes[currentIndex].shape.length) {
-        currentRotation = 0;  // 回転が最後まで行ったら最初に戻る
+        currentRotation = 0;
     }
     current = tetrominoes[currentIndex].shape[currentRotation];
 
-    // 境界チェック
     const isAtRightEdge = current.some(index => (currentPosition + index) % width >= width - 1);
     const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0);
     
-    // もし回転した後に右端や左端を超える場合、位置を調整
     if (isAtRightEdge) {
-        currentPosition -= 1;  // 右端にいる場合は左に1マス移動
+        currentPosition -= 1;
     } else if (isAtLeftEdge) {
-        currentPosition += 1;  // 左端にいる場合は右に1マス移動
+        currentPosition += 1;
     }
 
-    // 重なりチェック：他のブロックと重ならないようにする
+    if (currentIndex === 5 && currentRotation === 2) {
+        currentPosition += 1;
+    }
+
     if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
-        currentRotation = previousRotation;  // 重なった場合、回転を元に戻す
+        currentRotation = previousRotation;
         current = tetrominoes[currentIndex].shape[currentRotation];
     }
 
-    draw();  // 新しい回転状態でミノを描画
+    draw();
 }
 
 timerId = setInterval(moveDown, 1000);  // ゲーム開始時にミノを落とすタイマーを設定
