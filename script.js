@@ -8,7 +8,7 @@ let currentPosition = 4;
 let currentRotation = 0;
 let score = 0;
 let timerId;
-let currentIndex = 0;  // 現在のテトリミノのインデックス
+let currentIndex = 0;
 
 const scoreDisplay = document.createElement('div');
 scoreDisplay.id = 'score';
@@ -72,7 +72,6 @@ const tetrominoes = [
     }
 ];
 
-// テトリミノを順番に取得
 let current = tetrominoes[currentIndex].shape[currentRotation];
 
 function draw() {
@@ -88,10 +87,10 @@ function undraw() {
 }
 
 function moveDown() {
-    undraw();  // 現在のミノを消す
-    currentPosition += width;  // ミノの位置を1段下げる
-    draw();  // 新しい位置にミノを描画
-    freeze();  // 底に到達した場合の処理
+    undraw();
+    currentPosition += width;
+    draw();
+    freeze();
 }
 
 function freeze() {
@@ -103,13 +102,13 @@ function freeze() {
 
         checkRow();
 
-        // 次のテトリミノを取得
-        currentIndex = (currentIndex + 1) % tetrominoes.length;  // %で配列の長さに収める
-        currentRotation = 0;  // 常に新しいミノの回転を0に初期化
+        // 新しいテトリミノを生成
+        currentIndex = (currentIndex + 1) % tetrominoes.length;
+        currentRotation = 0;
         current = tetrominoes[currentIndex].shape[currentRotation];
         currentPosition = 4;
 
-        // ゲームオーバー判定
+        // 新しいテトリミノが生成された時、すでにブロックがある場合はゲームオーバー
         if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
             alert("ゲームオーバー");
             clearInterval(timerId);
@@ -160,7 +159,7 @@ function resetGame() {
     score = 0;
     scoreDisplay.innerHTML = `Score: ${score}`;
 
-    timerId = setInterval(moveDown, 1000);  // タイマーを再起動
+    timerId = setInterval(moveDown, 1000);
     currentIndex = 0;
     currentRotation = 0;
     current = tetrominoes[currentIndex].shape[currentRotation];
@@ -212,24 +211,22 @@ function rotate() {
 
     const isAtRightEdge = current.some(index => (currentPosition + index) % width >= width - 1);
     const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0);
-    
+
+    // 境界チェック
     if (isAtRightEdge) {
-        currentPosition -= 1;
+        currentPosition -= 1;  // 右端にいる場合は左に1マス移動
     } else if (isAtLeftEdge) {
-        currentPosition += 1;
+        currentPosition += 1;  // 左端にいる場合は右に1マス移動
     }
 
-    if (currentIndex === 5 && currentRotation === 2) {
-        currentPosition += 1;
-    }
-
+    // 回転後のブロックが他と重なるかチェック
     if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
-        currentRotation = previousRotation;
+        currentRotation = previousRotation;  // 重なった場合は回転を元に戻す
         current = tetrominoes[currentIndex].shape[currentRotation];
     }
 
     draw();
 }
 
-timerId = setInterval(moveDown, 1000);  // ゲーム開始時にミノを落とすタイマーを設定
+timerId = setInterval(moveDown, 1000);
 draw();
