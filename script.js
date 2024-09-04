@@ -139,7 +139,6 @@ function checkRow() {
                 row.forEach(index => {
                     squares[index].classList.remove('filled', 'block', 'fade-out');
                     squares[index].style.backgroundColor = '';  // 色をリセット
-                    squares[index].style.transform = '';  // 変形をリセット
                 });
 
                 // 削除された行をスライスし、上の行を落とす
@@ -147,17 +146,9 @@ function checkRow() {
                 squares = removedSquares.concat(squares);
                 squares.forEach(cell => tetris.appendChild(cell));  // 再描画
 
-                // すべてのブロックを再描画して残像を消去
-                squares.forEach(square => {
-                    square.classList.remove('block');
-                    square.style.backgroundColor = '';  // 色をリセット
-                    square.style.transform = '';  // 変形をリセット
-                });
-
             }, 500);  // エフェクトが終了するまで0.5秒待機
         }
     }
-}
 }
 
 function resetGame() {
