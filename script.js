@@ -124,28 +124,40 @@ function checkRow() {
     for (let i = 0; i < height; i++) {
         let row = Array.from({ length: width }, (_, j) => i * width + j);
 
+        // 行がすべて filled クラスを持っているか確認
         if (row.every(index => squares[index].classList.contains('filled'))) {
             score += 10;
             scoreDisplay.innerHTML = `Score: ${score}`;
 
+            // フェードアウトエフェクトを適用
             row.forEach(index => {
-                squares[index].classList.add('fade-out');  // 拡大・色変化・回転・フェードアウトを適用
+                squares[index].classList.add('fade-out');
             });
 
+            // フェードアウト後に行を削除
             setTimeout(() => {
                 row.forEach(index => {
                     squares[index].classList.remove('filled', 'block', 'fade-out');
-                    squares[index].style.backgroundColor = '';
+                    squares[index].style.backgroundColor = '';  // 色をリセット
                     squares[index].style.transform = '';  // 変形をリセット
                 });
 
+                // 削除された行をスライスし、上の行を落とす
                 const removedSquares = squares.splice(i * width, width);
                 squares = removedSquares.concat(squares);
-                squares.forEach(cell => tetris.appendChild(cell));
+                squares.forEach(cell => tetris.appendChild(cell));  // 再描画
 
-            }, 500);  // エフェクト完了後に行を削除
+                // すべてのブロックを再描画して残像を消去
+                squares.forEach(square => {
+                    square.classList.remove('block');
+                    square.style.backgroundColor = '';  // 色をリセット
+                    square.style.transform = '';  // 変形をリセット
+                });
+
+            }, 500);  // エフェクトが終了するまで0.5秒待機
         }
     }
+}
 }
 
 function resetGame() {
