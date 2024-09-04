@@ -101,19 +101,18 @@ function freeze() {
 
         current.forEach(index => squares[currentPosition + index].classList.add('filled'));
 
-        // 行が消える処理
         checkRow();
 
         // 次のテトリミノを取得
-        currentIndex = (currentIndex + 1) % tetrominoes.length;
-        currentRotation = 0;
+        currentIndex = (currentIndex + 1) % tetrominoes.length;  // %で配列の長さに収める
+        currentRotation = 0;  // 常に新しいミノの回転を0に初期化
         current = tetrominoes[currentIndex].shape[currentRotation];
         currentPosition = 4;
 
         // ゲームオーバー判定
         if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
             alert("ゲームオーバー");
-            clearInterval(timerId);  // タイマーを停止
+            clearInterval(timerId);
             resetGame();
         } else {
             draw();
