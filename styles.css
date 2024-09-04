@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff;
+    margin: 0;
+}
+
+#tetris {
+    width: 200px;
+    height: 400px;
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    gap: 1px;
+    border: 2px solid #000;
+}
+
+.block {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+.filled {
+    background-color: #000;
+}
+
+#score {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.filled {
+    background-color: #000;
+    transition: background-color 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
+}
+
+.fade-out {
+    background-color: #ff6347;
+    transform: scale(1.5) rotate(180deg);
+    opacity: 0;
+}
