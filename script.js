@@ -19,20 +19,20 @@ const tetrominoes = [
     // Iミノ
     {
         shape: [
-            [1, width + 1, width * 2 + 1, width * 3 + 1], // I
+            [1, width + 1, width * 2 + 1, width * 3 + 1],
             [width, width + 1, width + 2, width + 3]
         ]
     },
     // Oミノ
     {
         shape: [
-            [0, 1, width, width + 1] // O
+            [0, 1, width, width + 1]
         ]
     },
     // Tミノ
     {
         shape: [
-            [1, width, width + 1, width + 2], // T
+            [1, width, width + 1, width + 2],
             [1, width + 1, width + 2, width * 2 + 1],
             [width, width + 1, width + 2, width * 2 + 1],
             [1, width, width + 1, width * 2 + 1]
@@ -41,21 +41,21 @@ const tetrominoes = [
     // Sミノ
     {
         shape: [
-            [0, 1, width + 1, width + 2], // S
+            [0, 1, width + 1, width + 2],
             [2, width + 1, width + 2, width * 2 + 1]
         ]
     },
     // Zミノ
     {
         shape: [
-            [1, 2, width, width + 1], // Z
+            [1, 2, width, width + 1],
             [1, width + 1, width + 2, width * 2 + 2]
         ]
     },
     // Jミノ
     {
         shape: [
-            [0, width, width + 1, width + 2], // J
+            [0, width, width + 1, width + 2],
             [1, 2, width + 2, width * 2 + 2],
             [width, width + 1, width + 2, width * 2 + 2],
             [1, width + 1, width + 2, width * 2]
@@ -64,13 +64,36 @@ const tetrominoes = [
     // Lミノ
     {
         shape: [
-            [2, width, width + 1, width + 2], // L
+            [2, width, width + 1, width + 2],
             [1, width + 1, width * 2 + 1, width * 2 + 2],
             [width, width + 1, width + 2, width * 2],
             [0, 1, width + 1, width * 2 + 1]
         ]
     }
 ];
+
+function generateMinos() {
+  let minosBag = [];
+
+  function refillBag() {
+    minosBag = [...tetrominoes];
+    minosBag = shuffle(minosBag);
+  }
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  if (minosBag.length === 0) {
+    refillBag();
+  }
+
+  return minosBag.pop();
+}
 
 let current = tetrominoes[currentIndex].shape[currentRotation];
 
@@ -100,22 +123,34 @@ function freeze() {
 
         current.forEach(index => squares[currentPosition + index].classList.add('filled'));
 
-        checkRow();
-
-        // 新しいテトリミノを生成
-        currentIndex = (currentIndex + 1) % tetrominoes.length;
-        currentRotation = 0;
-        current = tetrominoes[currentIndex].shape[currentRotation];
-        currentPosition = 4;
-
-        // 新しいテトリミノが生成された時、すでにブロックがある場合はゲームオーバー
-        if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
+        if (checkGameOver()) {
             alert("ゲームオーバー");
             clearInterval(timerId);
             resetGame();
         } else {
-            draw();
+            checkRow();
+            generateNewTetromino();
         }
+    }
+}
+
+function checkGameOver() {
+    return current.some(index => (currentPosition + index < width * 2) && squares[currentPosition + index].classList.contains('filled'));
+}
+
+function generateNewTetromino() {
+    currentIndex = (currentIndex + 1) % tetrominoes.length;
+    currentRotation = 0;
+    current = tetrominoes[currentIndex].shape[currentRotation];
+    
+    currentPosition = Math.floor(width / 2) - 1;
+    
+    if (checkGameOver()) {
+        alert("ゲームオーバー");
+        clearInterval(timerId);
+        resetGame();
+    } else {
+        draw();
     }
 }
 
@@ -123,29 +158,25 @@ function checkRow() {
     for (let i = 0; i < height; i++) {
         let row = Array.from({ length: width }, (_, j) => i * width + j);
 
-        // 行がすべて filled クラスを持っているか確認
         if (row.every(index => squares[index].classList.contains('filled'))) {
             score += 10;
             scoreDisplay.innerHTML = `Score: ${score}`;
 
-            // フェードアウトエフェクトを適用
             row.forEach(index => {
                 squares[index].classList.add('fade-out');
             });
 
-            // フェードアウト後に行を削除
             setTimeout(() => {
                 row.forEach(index => {
                     squares[index].classList.remove('filled', 'block', 'fade-out');
-                    squares[index].style.backgroundColor = '';  // 色をリセット
+                    squares[index].style.backgroundColor = '';  
                 });
 
-                // 削除された行をスライスし、上の行を落とす
                 const removedSquares = squares.splice(i * width, width);
                 squares = removedSquares.concat(squares);
-                squares.forEach(cell => tetris.appendChild(cell));  // 再描画
+                squares.forEach(cell => tetris.appendChild(cell));
 
-            }, 500);  // エフェクトが終了するまで0.5秒待機
+            }, 500);  
         }
     }
 }
@@ -163,7 +194,7 @@ function resetGame() {
     currentIndex = 0;
     currentRotation = 0;
     current = tetrominoes[currentIndex].shape[currentRotation];
-    currentPosition = 4;
+    currentPosition = Math.floor(width / 2) - 1;
     draw();
 }
 
@@ -201,27 +232,15 @@ function moveRight() {
 }
 
 function rotate() {
-    undraw();
-    const previousRotation = currentRotation;
-    currentRotation++;
-    if (currentRotation === tetrominoes[currentIndex].shape.length) {
-        currentRotation = 0;
-    }
+    undraw();  
+    const previousRotation = currentRotation;  
+    currentRotation = (currentRotation + 1) % tetrominoes[currentIndex].shape.length;
     current = tetrominoes[currentIndex].shape[currentRotation];
 
-    const isAtRightEdge = current.some(index => (currentPosition + index) % width >= width - 1);
-    const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0);
+    const isAtEdge = current.some(index => (currentPosition + index) % width === 0 || (currentPosition + index) % width === width - 1);
 
-    // 境界チェック
-    if (isAtRightEdge) {
-        currentPosition -= 1;  // 右端にいる場合は左に1マス移動
-    } else if (isAtLeftEdge) {
-        currentPosition += 1;  // 左端にいる場合は右に1マス移動
-    }
-
-    // 回転後のブロックが他と重なるかチェック
-    if (current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
-        currentRotation = previousRotation;  // 重なった場合は回転を元に戻す
+    if (isAtEdge || current.some(index => squares[currentPosition + index].classList.contains('filled'))) {
+        currentRotation = previousRotation;
         current = tetrominoes[currentIndex].shape[currentRotation];
     }
 
